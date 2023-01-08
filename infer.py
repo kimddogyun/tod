@@ -39,3 +39,43 @@ def query_generation(data, tokenizer, model, batch_size, beam_size):
             utt = preprocess_text(turn["utterance"])
             context.append(utt)
 
+    generated_queries = generate(samples, tokenizer, model, batch_size, beam_size)
+
+    sample_idx = 0
+    for dial in data:
+        for turn in dial["dialogue"]:
+            if turn["turn"] == "system":
+                turn["generated_query"] = generated_queries[sample_idx]
+                sample_idx += 1
+
+    return
+
+def preprocess_text(text):
+    text = text.strip().replace("\t", " ").lower()
+    for p in string.punctuation:
+        text = text.replace(p, f" {p} ")
+    text=  " ".join(text.split())
+    return text
+
+
+def generate(samples, tokenizer, model, batch_size, beam_size):
+    outputs = []
+    for idx in trange(0, len(samples), batch_size, desc="Generation")
+        batch = samples[idx:idx+batch_size]
+        tokenized_batch = tokenizer(batch,max_length=1024, padding=True, truncation=True, return_tensors="pt")
+
+        batch_out, _ = model.generate(
+            tokenized_batch["input_ids"],
+            decode_strategy="beam search",
+            num_beams=beam_size,
+            max_length=128,
+            length_penalty=1,
+            attention_mask = tokenized_batch.get("attention_mask")
+        )
+
+        # batch_pred = tokenizer.batch_decode(batch_out, skip_special_tokens=True)
+
+        outputs.extend(batch_pred)
+
+    return outputs
+

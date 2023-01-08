@@ -140,7 +140,7 @@ def score_MWOZ(mdoel,file_to_score):
                 preds.append(preprocess_text(turn["generated_response"]))
             else:
                 preds.append(turn["generated_response"])
-            refs.append(turn["utterance"])
+            refs.append(turn["utterance"]) #utterence -> agent or user&agent? 
     assert len(preds) == len(refs), f"{len(preds)} != {len(refs)}"
 
     bleu_metric = moses_multi_bleu(np.array(preds), np.array(refs), lowercase=True)

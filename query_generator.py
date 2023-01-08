@@ -21,7 +21,7 @@ class Model(object):
         self.model.to(args.device)
 
     def load_model(self):
-        self.model = type(self.model).from_pretrained(self.args.model_path)
+        self.model = self.model.from_pretrained(self.args.model_path)
         self.model.to(self.args.device)
 
     def train(self):
